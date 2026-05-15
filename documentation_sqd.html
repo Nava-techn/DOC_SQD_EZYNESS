@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentation — Suivi Qualité des Données Identitaires</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --primary: #4d3367;
+    --secondary: #2d6682;
+    --accent: #f5b62f;
+    --teal: #3a8c96;
+    --red: #d32229;
+    --orange: #c66428;
+    --dark: #1a1a2e;
+    --text: #2c2c3e;
+    --text-light: #6b6b8a;
+    --bg: #f8f7fc;
+    --bg-card: #ffffff;
+    --border: #e8e4f0;
+    --sidebar-w: 260px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: linear-gradient(180deg, var(--primary) 0%, #2d1f3d 100%);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow-y: auto;
+    box-shadow: 4px 0 20px rgba(77,51,103,0.3);
+  }
+
+  .sidebar-header {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .sidebar-logo .dot {
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .sidebar-logo span {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .sidebar-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.4;
+  }
+
+  .sidebar-version {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 4px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .nav-section {
+    padding: 16px 12px 8px;
+  }
+
+  .nav-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0 8px;
+    margin-bottom: 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 2px;
+    border: 1px solid transparent;
+  }
+
+  .nav-item:hover {
+    background: rgba(255,255,255,0.08);
+  }
+
+  .nav-item.active {
+    background: rgba(245,182,47,0.15);
+    border-color: rgba(245,182,47,0.3);
+  }
+
+  .nav-icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .nav-item.active .nav-icon {
+    background: var(--accent);
+  }
+
+  .nav-text {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.3;
+  }
+
+  .nav-item.active .nav-text {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    text-align: center;
+  }
+
+  /* ── MAIN ── */
+  .main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 40px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .page-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(77,51,103,0.08);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+
+  .page-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+    color: var(--text-light);
+    line-height: 1.6;
+    max-width: 680px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(77,51,103,0.06);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .card-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--text-light);
+    margin-top: 2px;
+  }
+
+  .card p {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  .card p:last-child { margin-bottom: 0; }
+
+  /* ── DEFINITION BOX ── */
+  .def-box {
+    background: linear-gradient(135deg, rgba(77,51,103,0.06), rgba(45,102,130,0.06));
+    border: 1px solid rgba(77,51,103,0.15);
+    border-left: 4px solid var(--primary);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+  }
+
+  .def-box .def-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+
+  .def-box p {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--text);
+    margin: 0;
+  }
+
+  /* ── STATUS BADGES ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .badge-green { background: rgba(58,140,150,0.12); color: var(--teal); }
+  .badge-red { background: rgba(211,34,41,0.1); color: var(--red); }
+  .badge-orange { background: rgba(245,182,47,0.15); color: var(--orange); }
+  .badge-blue { background: rgba(45,102,130,0.1); color: var(--secondary); }
+  .badge-purple { background: rgba(77,51,103,0.1); color: var(--primary); }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+
+  /* ── KPI CARD ── */
+  .kpi-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    box-shadow: 0 2px 6px rgba(77,51,103,0.05);
+  }
+
+  .kpi-card .kpi-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .kpi-card .kpi-desc {
+    font-size: 12.5px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .kpi-card .kpi-bar {
+    height: 3px;
+    border-radius: 2px;
+    margin-bottom: 12px;
+  }
+
+  /* ── LIST ── */
+  .doc-list {
+    list-style: none;
+    margin: 12px 0;
+  }
+
+  .doc-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .doc-list li:last-child { border-bottom: none; }
+
+  .doc-list .bullet {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+
+  /* ── FILTER TAGS ── */
+  .filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+  }
+
+  .filter-tag {
+    background: rgba(45,102,130,0.08);
+    border: 1px solid rgba(45,102,130,0.2);
+    color: var(--secondary);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── TABLE ── */
+  .doc-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 12px 0;
+  }
+
+  .doc-table th {
+    background: var(--primary);
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
+  .doc-table th:first-child { border-radius: 6px 0 0 0; }
+  .doc-table th:last-child { border-radius: 0 6px 0 0; }
+
+  .doc-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    line-height: 1.5;
+    vertical-align: top;
+  }
+
+  .doc-table tr:hover td { background: rgba(77,51,103,0.03); }
+
+  .doc-table td:first-child {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* ── SEPARATOR ── */
+  .sep {
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    margin: 28px 0;
+    opacity: 0.4;
+  }
+
+  /* ── HIGHLIGHT BOX ── */
+  .highlight {
+    background: linear-gradient(135deg, rgba(245,182,47,0.08), rgba(198,100,40,0.05));
+    border: 1px solid rgba(245,182,47,0.3);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 12px 0;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .highlight strong {
+    color: var(--orange);
+  }
+
+  /* ── NAV BUTTONS (doc header) ── */
+  .nav-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+  }
+
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--primary);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .nav-btn.accent { background: var(--accent); color: var(--dark); }
+  .nav-btn.teal { background: var(--teal); }
+  .nav-btn.secondary { background: var(--secondary); }
+
+  /* ── SCROLLBAR ── */
+  .main::-webkit-scrollbar { width: 6px; }
+  .main::-webkit-scrollbar-track { background: transparent; }
+  .main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+
+  /* ── EXAMPLE BOX ── */
+  .example-box {
+    background: #1a1a2e;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: #a8b4c8;
+    line-height: 1.8;
+  }
+
+  .example-box .ex-rank { color: var(--accent); }
+  .example-box .ex-field { color: #7dd3fc; }
+  .example-box .ex-count { color: #86efac; }
+
+  h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--secondary);
+    margin: 20px 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  h3::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 14px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <div class="dot"></div>
+      <span>Documentation</span>
+    </div>
+    <div class="sidebar-title">Suivi Qualité des Données Identitaires</div>
+    <div class="sidebar-version">v1.0 — 2026</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Général</div>
+    <div class="nav-item active" onclick="show('general', this)">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-text">Présentation générale</div>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Dashboards</div>
+    <div class="nav-item" onclick="show('sqd', this)">
+      <div class="nav-icon">📊</div>
+      <div class="nav-text">SQD — Accueil</div>
+    </div>
+    <div class="nav-item" onclick="show('filtre_unique', this)">
+      <div class="nav-icon">🔍</div>
+      <div class="nav-text">Filtre Par Champ Unique</div>
+    </div>
+    <div class="nav-item" onclick="show('filtre_multiple', this)">
+      <div class="nav-icon">⚡</div>
+      <div class="nav-text">Filtre Multiple</div>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    Tagpay — Data Quality Team
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SECTION : PRÉSENTATION GÉNÉRALE -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section active" id="section-general">
+
+    <div class="page-header">
+      <div class="page-tag">📋 Documentation</div>
+      <div class="page-title">Présentation Générale</div>
+      <div class="page-subtitle">Vue d'ensemble du tableau de bord de pilotage de la qualité des données identitaires clients.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(77,51,103,0.1)">🎯</div>
+        <div>
+          <div class="card-title">Objectif</div>
+        </div>
+      </div>
+      <p>Ce tableau de bord permet aux équipes métier de <strong>suivre, analyser et piloter la qualité des données identitaires</strong> des clients enregistrés dans le système. Il offre une vision claire et actualisée de l'état des données à chaque mise à jour, ainsi qu'une comparaison avec la mise à jour précédente.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="def-box">
+        <div class="def-label">✅ Identité Correcte</div>
+        <p>Client dont <strong>toutes les données obligatoires</strong> sont renseignées et conformes aux règles de validation attendues.</p>
+      </div>
+      <div class="def-box" style="border-left-color: var(--red);">
+        <div class="def-label" style="color:var(--red)">❌ Identité Incorrecte</div>
+        <p>Client ayant <strong>au moins une donnée</strong> mal renseignée, absente ou non conforme aux règles de validation.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(58,140,150,0.1)">👥</div>
+        <div>
+          <div class="card-title">Types de clients</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <span class="badge badge-blue">PMO — Personne Morale</span>
+          <ul class="doc-list" style="margin-top:10px">
+            <li><div class="bullet"></div>Raison sociale, forme juridique</li>
+            <li><div class="bullet"></div>SIRET / SIREN, code NAF</li>
+            <li><div class="bullet"></div>Chiffre d'affaires</li>
+            <li><div class="bullet"></div>Pays d'immatriculation, date et lieu d'immatriculation</li>
+          </ul>
+        </div>
+        <div>
+          <span class="badge badge-purple">PPH — Personne Physique</span>
+          <ul class="doc-list" style="margin-top:10px">
+            <li><div class="bullet"></div>Nom, prénom, titre, genre</li>
+            <li><div class="bullet"></div>Date, lieu et pays de naissance</li>
+            <li><div class="bullet"></div>Nationalité</li>
+            <li><div class="bullet"></div>Code département de naissance</li>
+          </ul>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <p><strong>Champs communs aux deux types :</strong> Adresse, ville, code postal, pays, email, téléphone, adresse fiscale, ville fiscale, pays fiscal, code postal fiscal.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(245,182,47,0.15)">🔗</div>
+        <div>
+          <div class="card-title">Navigation entre dashboards</div>
+          <div class="card-desc">Chaque dashboard dispose d'une barre de navigation avec les boutons suivants</div>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <div class="nav-btn">🏠 ACCUEIL</div>
+        <div class="nav-btn secondary">🔍 FILTRE PAR CHAMP UNIQUE</div>
+        <div class="nav-btn teal">⚡ FILTRE MULTIPLE</div>
+        <div class="nav-btn" style="background:var(--orange)">📋 DOCUMENTATION</div>
+        <div class="nav-btn accent">⬇ TÉLÉCHARGER</div>
+      </div>
+      <p style="margin-top:12px">L'en-tête de chaque dashboard affiche également la <strong>date de la dernière exécution</strong> et la <strong>date de l'avant-dernière exécution</strong>, qui servent de référence pour tous les calculs comparatifs.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(45,102,130,0.1)">🛡️</div>
+        <div>
+          <div class="card-title">Filtres communs à tous les dashboards</div>
+        </div>
+      </div>
+      <div class="filter-tags">
+        <span class="filter-tag">legal_type_label</span>
+        <span class="filter-tag">identity_status_label</span>
+        <span class="filter-tag">identity_role_label</span>
+      </div>
+      <table class="doc-table">
+        <thead>
+          <tr><th>Filtre</th><th>Description</th><th>Recommandation</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>legal_type_label</td><td>Filtrer par type de client : Personne Morale ou Personne Physique</td><td>Séparer les analyses PMO et PPH pour des actions correctives ciblées</td></tr>
+          <tr><td>identity_status_label</td><td>Filtrer par statut du client : opened, closed, pending...</td><td>Filtrer sur <strong>opened</strong> pour prioriser les clients actifs</td></tr>
+          <tr><td>identity_role_label</td><td>Filtrer par rôle de l'identité dans le système</td><td>Utile pour cibler des profils spécifiques</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(77,51,103,0.1)">🔄</div>
+        <div>
+          <div class="card-title">Fréquence de mise à jour</div>
+        </div>
+      </div>
+      <p>Le flux de données est exécuté régulièrement. Chaque nouvelle exécution ajoute un snapshot complet de l'état des données à un instant T, permettant une <strong>comparaison historique</strong> entre les exécutions et un suivi de l'évolution de la qualité dans le temps.</p>
+      <div class="highlight">
+        <strong>💡 Conseil :</strong> Pour toute question sur les règles de validation appliquées sur chaque champ, se référer aux <strong>fichiers de référence du projet</strong>. Ces règles définissent les critères de présence, de format et de cohérence attendus pour chaque donnée.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SECTION : SQD ACCUEIL -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section" id="section-sqd">
+
+    <div class="page-header">
+      <div class="page-tag">📊 Dashboard</div>
+      <div class="page-title">SQD — Accueil</div>
+      <div class="page-subtitle">Vue globale et synthétique de la qualité des données identitaires. Point d'entrée principal du tableau de bord.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(45,102,130,0.1)">🛡️</div>
+        <div><div class="card-title">Filtres disponibles</div></div>
+      </div>
+      <div class="filter-tags">
+        <span class="filter-tag">legal_type_label</span>
+        <span class="filter-tag">identity_status_label</span>
+        <span class="filter-tag">identity_role_label</span>
+      </div>
+    </div>
+
+    <h3>Indicateurs Globaux</h3>
+    <p style="font-size:13px;color:var(--text-light);margin-bottom:16px">Vue synthétique de l'état des données lors de la dernière mise à jour.</p>
+
+    <div class="grid-2">
+      <div class="kpi-card">
+        <div class="kpi-bar" style="background:var(--teal)"></div>
+        <div class="kpi-name">Nombre Total Identités Corrects</div>
+        <div class="kpi-desc">Nombre de clients dont <strong>toutes les données sont conformes</strong> lors de la dernière exécution.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-bar" style="background:var(--red)"></div>
+        <div class="kpi-name">Nombre Total Identités Incorrects</div>
+        <div class="kpi-desc">Nombre de clients ayant <strong>au moins une donnée mal renseignée</strong> ou non conforme lors de la dernière exécution.</div>
+      </div>
+    </div>
+
+    <h3>Détail Par Catégorie</h3>
+    <p style="font-size:13px;color:var(--text-light);margin-bottom:16px">Répartition détaillée en 4 catégories sous forme de camembert. La comparaison se fait entre la dernière exécution (n) et l'avant-dernière (n-1).</p>
+
+    <div class="grid-2">
+      <div class="kpi-card">
+        <div class="kpi-bar" style="background:var(--teal)"></div>
+        <div class="kpi-name">Nombre Total Identités Corrects n-1 + Nombre Total Nouveaux Identités Corrects</div>
+        <div class="kpi-desc">Identités déjà correctes lors de l'exécution n-1 et toujours correctes, auxquelles s'ajoutent les nouvelles identités correctes apparues depuis.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-bar" style="background:#2d6682"></div>
+        <div class="kpi-name">Nombre Total Identités Corrigés Après Exécution n-1</div>
+        <div class="kpi-desc">Identités qui étaient incorrectes lors de l'exécution n-1 et <strong>corrigées avec succès</strong> dans la dernière exécution. Plus ce chiffre est élevé, plus les corrections ont été efficaces.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-bar" style="background:var(--red)"></div>
+        <div class="kpi-name">Nombre Total Identités Non Corrigés Après Exécution n-1</div>
+        <div class="kpi-desc">Identités qui étaient incorrectes lors de l'exécution n-1 et qui le sont <strong>toujours</strong>. Ces identités nécessitent une action corrective prioritaire.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-bar" style="background:var(--orange)"></div>
+        <div class="kpi-name">Nombre Total Nouveaux D'identités Incorrects</div>
+        <div class="kpi-desc">Identités apparues <strong>pour la première fois</strong> dans la dernière exécution et présentant déjà des anomalies. Ces identités n'existaient pas lors de l'exécution n-1.</div>
+      </div>
+    </div>
+
+    <h3>Graphe Évolutif</h3>
+    <p style="font-size:13px;color:var(--text-light);margin-bottom:16px">Courbes d'évolution sur l'ensemble des exécutions disponibles.</p>
+
+    <div class="grid-2">
+      <div class="kpi-card">
+        <div class="kpi-bar" style="background:var(--secondary)"></div>
+        <div class="kpi-name">Nombre Total Identités Vérifiées Par Execution</div>
+        <div class="kpi-desc">Nombre total de clients analysés à chaque exécution. Cette courbe reflète la <strong>croissance du portefeuille clients</strong>.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-bar" style="background:var(--red)"></div>
+        <div class="kpi-name">Nombre Total Identités Incorrects Par Execution</div>
+        <div class="kpi-desc">Nombre de clients en erreur à chaque exécution. Cette courbe doit tendre à <strong>s'éloigner de la courbe totale</strong> au fil du temps.</div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <strong>📈 Interprétation :</strong> L'objectif qualité est que la courbe des identités incorrectes s'éloigne progressivement de la courbe des identités vérifiées. Plus l'écart entre les deux courbes est grand, meilleure est la qualité des données.
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SECTION : FILTRE UNIQUE -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section" id="section-filtre_unique">
+
+    <div class="page-header">
+      <div class="page-tag">🔍 Dashboard</div>
+      <div class="page-title">SQD — Filtre Par Champ Unique</div>
+      <div class="page-subtitle">Analyse approfondie de la qualité des données champ par champ. Permet d'identifier précisément les clients en erreur sur un critère spécifique.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(45,102,130,0.1)">🛡️</div>
+        <div><div class="card-title">Filtres disponibles</div></div>
+      </div>
+      <div class="filter-tags">
+        <span class="filter-tag">Colonne à afficher</span>
+        <span class="filter-tag">legal_type_label</span>
+        <span class="filter-tag">identity_status_label</span>
+        <span class="filter-tag">identity_role_label</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(245,182,47,0.15)">🎛️</div>
+        <div>
+          <div class="card-title">Paramètre — Colonne à afficher</div>
+          <div class="card-desc">Sélectionnez un champ dans la liste déroulante pour analyser la qualité des données sur ce champ précis</div>
+        </div>
+      </div>
+
+      <h3>Champs Personne Morale uniquement</h3>
+      <div class="filter-tags">
+        <span class="filter-tag">Annual Turnover</span>
+        <span class="filter-tag">Brand Name</span>
+        <span class="filter-tag">Legal Category</span>
+        <span class="filter-tag">Legal Form</span>
+        <span class="filter-tag">Legal Name</span>
+        <span class="filter-tag">Registration Country</span>
+        <span class="filter-tag">Registration Date</span>
+        <span class="filter-tag">Registration Number</span>
+        <span class="filter-tag">Registration Place</span>
+      </div>
+
+      <h3>Champs Personne Physique uniquement</h3>
+      <div class="filter-tags">
+        <span class="filter-tag">Birth Country</span>
+        <span class="filter-tag">Birth Date</span>
+        <span class="filter-tag">Birth Place</span>
+        <span class="filter-tag">First Name</span>
+        <span class="filter-tag">Gender</span>
+        <span class="filter-tag">Code Departement De Naissance</span>
+        <span class="filter-tag">Nationality</span>
+        <span class="filter-tag">Person Title Id</span>
+        <span class="filter-tag">Tax Address Line1</span>
+      </div>
+
+      <h3>Champs communs aux deux types</h3>
+      <div class="filter-tags">
+        <span class="filter-tag">Address Line1</span>
+        <span class="filter-tag">City</span>
+        <span class="filter-tag">Contact Phone</span>
+        <span class="filter-tag">Country</span>
+        <span class="filter-tag">Email</span>
+        <span class="filter-tag">Tax City</span>
+        <span class="filter-tag">Tax Country</span>
+        <span class="filter-tag">Tax Zip Code</span>
+        <span class="filter-tag">Zipcode</span>
+      </div>
+    </div>
+
+    <h3>Statistique Par Champ Sélectionné</h3>
+    <p style="font-size:13px;color:var(--text-light);margin-bottom:16px">Titre affiché : <em>"Statistique par champ sélectionné : [nom du champ]"</em></p>
+
+    <div class="grid-2">
+      <div class="kpi-card">
+        <div class="kpi-bar" style="background:var(--teal)"></div>
+        <div class="kpi-name">🟢 Nombre Données Correctes Pour Le Champ Sélectionné</div>
+        <div class="kpi-desc">Nombre de clients dont la donnée pour ce champ est <strong>correctement renseignée et conforme</strong>. Le pourcentage affiché représente la part des clients corrects sur le total concerné par ce champ.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-bar" style="background:var(--red)"></div>
+        <div class="kpi-name">🔴 Nombre Données Erronées Pour Le Champ Sélectionné</div>
+        <div class="kpi-desc">Nombre de clients dont la donnée est <strong>absente, mal renseignée ou non conforme</strong>. Le pourcentage représente la part des clients en erreur sur le total concerné par ce champ.</div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <strong>⚠️ Remarque :</strong> Le total des deux barres représente le nombre total de clients concernés par ce champ. Ce total peut varier selon le type de client sélectionné, car certains champs ne s'appliquent qu'aux Personnes Morales ou qu'aux Personnes Physiques.
+    </div>
+
+    <h3>Liste des données erronées</h3>
+    <div class="card">
+      <p>Tableau détaillé affichant pour chaque client en erreur sur le champ sélectionné :</p>
+      <table class="doc-table">
+        <thead>
+          <tr><th>Colonne</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>id</td><td>Identifiant unique du client dans le système</td></tr>
+          <tr><td>legal_type_label</td><td>Type de client : Personne Morale ou Personne Physique</td></tr>
+          <tr><td>Valeur du champ</td><td>Valeur actuelle renseignée pour ce client (NULL si non renseignée)</td></tr>
+          <tr><td>Message d'erreur</td><td>Description précise de l'anomalie détectée sur ce champ</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight" style="margin-top:12px">
+        <strong>⬇ Export :</strong> Ce tableau est exportable en Excel via le bouton TÉLÉCHARGER pour permettre un suivi et des corrections par les équipes métier.
+      </div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--orange)">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(198,100,40,0.1)">⚠️</div>
+        <div>
+          <div class="card-title">Cas particulier : Legal Form</div>
+        </div>
+      </div>
+      <p>Ce champ dispose de <strong>deux niveaux d'anomalie</strong> :</p>
+      <ul class="doc-list">
+        <li><div class="bullet" style="background:var(--red)"></div><strong>Erreur</strong> : la valeur est non conforme aux règles — correction obligatoire</li>
+        <li><div class="bullet" style="background:var(--orange)"></div><strong>Avertissement</strong> : la valeur est à vérifier — correction recommandée. S'affiche uniquement si aucune erreur n'est présente sur ce champ.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SECTION : FILTRE MULTIPLE -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section" id="section-filtre_multiple">
+
+    <div class="page-header">
+      <div class="page-tag">⚡ Dashboard</div>
+      <div class="page-title">SQD — Filtre Multiple</div>
+      <div class="page-subtitle">Outil d'analyse flexible permettant d'analyser simultanément plusieurs champs et d'identifier les clients présentant des anomalies sur plusieurs critères à la fois.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(45,102,130,0.1)">🛡️</div>
+        <div><div class="card-title">Filtres disponibles</div></div>
+      </div>
+      <div class="filter-tags">
+        <span class="filter-tag">columns</span>
+        <span class="filter-tag">legal_type_label</span>
+        <span class="filter-tag">identity_status_label</span>
+        <span class="filter-tag">identity_role_label</span>
+      </div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>💡 Filtre columns :</strong> Sélectionnez le nom du champ suivi de son champ d'erreur correspondant pour afficher les valeurs erronées. Exemple : sélectionner <em>"email"</em> et <em>"email_error"</em> affiche les clients avec une erreur sur l'email.
+      </div>
+    </div>
+
+    <h3>Filtre Par Champs Multiples</h3>
+    <div class="card">
+      <p>Tableau affichant pour chaque client ayant au moins une erreur sur les champs sélectionnés :</p>
+      <table class="doc-table">
+        <thead>
+          <tr><th>Colonne</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>id</td><td>Identifiant unique du client</td></tr>
+          <tr><td>legal_type_label</td><td>Type de client : Personne Morale ou Personne Physique</td></tr>
+          <tr><td>name_description</td><td>Nom ou description du client</td></tr>
+          <tr><td>profile_name</td><td>Profil du client dans le système</td></tr>
+          <tr><td>[champ sélectionné]</td><td>Une colonne par champ sélectionné avec la valeur et le message d'erreur correspondant</td></tr>
+        </tbody>
+      </table>
+      <div class="def-box" style="margin-top:12px">
+        <div class="def-label">Logique d'affichage</div>
+        <p>Un client s'affiche dès qu'il a une erreur sur <strong>au moins un</strong> des champs sélectionnés (logique OU). Si un client n'a pas d'erreur sur un champ sélectionné, la cellule correspondante sera vide.</p>
+      </div>
+    </div>
+
+    <h3>Top des Champs Erronés</h3>
+    <div class="card">
+      <p>Classement des champs présentant le plus grand nombre d'identités en erreur, avec leur rang et leur nombre d'erreurs.</p>
+      <div class="example-box">
+        <span class="ex-rank">Rang</span> | <span class="ex-field">Champ</span>          | <span class="ex-count">Nombre d'erreurs</span><br>
+        <span class="ex-rank">  1 </span> | <span class="ex-field">legal_form    </span> | <span class="ex-count">7 872</span><br>
+        <span class="ex-rank">  2 </span> | <span class="ex-field">contact_phone </span> | <span class="ex-count">6 902</span><br>
+        <span class="ex-rank">  3 </span> | <span class="ex-field">email         </span> | <span class="ex-count">3 848</span><br>
+        <span class="ex-rank">  4 </span> | <span class="ex-field">annual_turnover</span>| <span class="ex-count">1 649</span>
+      </div>
+      <p>Ce classement permet d'identifier rapidement les <strong>champs prioritaires à corriger</strong> pour améliorer la qualité globale des données.</p>
+    </div>
+
+    <h3>Téléchargement</h3>
+    <div class="card">
+      <p>Le bouton <strong>TÉLÉCHARGER</strong> permet d'exporter en fichier Excel l'ensemble des données affichées dans le tableau.</p>
+      <ul class="doc-list">
+        <li><div class="bullet"></div>Créer des listes de travail pour les équipes de correction</li>
+        <li><div class="bullet"></div>Suivre l'avancement des corrections entre deux exécutions</li>
+        <li><div class="bullet"></div>Partager les anomalies avec les équipes concernées</li>
+      </ul>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg,rgba(77,51,103,0.04),rgba(45,102,130,0.04))">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(245,182,47,0.2)">💡</div>
+        <div><div class="card-title">Conseils d'utilisation</div></div>
+      </div>
+      <ul class="doc-list">
+        <li><div class="bullet"></div>Filtrer sur <strong>identity_status_label = "opened"</strong> pour prioriser les clients actifs</li>
+        <li><div class="bullet"></div>Sélectionner d'abord les champs obligatoires les plus critiques</li>
+        <li><div class="bullet"></div>Utiliser le filtre <strong>legal_type_label</strong> pour séparer les actions correctives PMO et PPH</li>
+        <li><div class="bullet"></div>Exporter en Excel et répartir les corrections par équipe métier</li>
+      </ul>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+  function show(id, el) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('section-' + id).classList.add('active');
+    el.classList.add('active');
+    document.querySelector('.main').scrollTop = 0;
+  }
+</script>
+
+</body>
+</html>
