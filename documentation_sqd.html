@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Documentation — Suivi Qualité des Données Identitaires</title>
+<title>Documentation - Suivi Qualité des Données Identitaires</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
@@ -511,7 +511,7 @@
       <div class="dot"></div>
       <span>Documentation</span>
     </div>
-    <div class="sidebar-title">Suivi Qualité des Données Identitaires</div>
+    <div class="sidebar-title">SUIVI QUALITES DES DONNEES</div>
     <div class="sidebar-version">v1.0 — 2026</div>
   </div>
 
@@ -527,7 +527,7 @@
     <div class="nav-label">Dashboards</div>
     <div class="nav-item" onclick="show('sqd', this)">
       <div class="nav-icon">📊</div>
-      <div class="nav-text">SQD — Accueil</div>
+      <div class="nav-text">SQD - Accueil</div>
     </div>
     <div class="nav-item" onclick="show('filtre_unique', this)">
       <div class="nav-icon">🔍</div>
@@ -540,7 +540,7 @@
   </div>
 
   <div class="sidebar-footer">
-    Tagpay — Data Quality Team
+    Data Quality eZyness
   </div>
 </nav>
 
@@ -588,7 +588,7 @@
       </div>
       <div class="grid-2">
         <div>
-          <span class="badge badge-blue">PMO — Personne Morale</span>
+          <span class="badge badge-blue">Personne Morale</span>
           <ul class="doc-list" style="margin-top:10px">
             <li><div class="bullet"></div>Raison sociale, forme juridique</li>
             <li><div class="bullet"></div>SIRET / SIREN, code NAF</li>
@@ -597,7 +597,7 @@
           </ul>
         </div>
         <div>
-          <span class="badge badge-purple">PPH — Personne Physique</span>
+          <span class="badge badge-purple">Personne Physique</span>
           <ul class="doc-list" style="margin-top:10px">
             <li><div class="bullet"></div>Nom, prénom, titre, genre</li>
             <li><div class="bullet"></div>Date, lieu et pays de naissance</li>
@@ -606,8 +606,10 @@
           </ul>
         </div>
       </div>
+      <!--
       <div class="sep"></div>
       <p><strong>Champs communs aux deux types :</strong> Adresse, ville, code postal, pays, email, téléphone, adresse fiscale, ville fiscale, pays fiscal, code postal fiscal.</p>
+     -->
     </div>
 
     <div class="card">
@@ -674,7 +676,7 @@
 
     <div class="page-header">
       <div class="page-tag">📊 Dashboard</div>
-      <div class="page-title">SQD — Accueil</div>
+      <div class="page-title">SQD - Accueil</div>
       <div class="page-subtitle">Vue globale et synthétique de la qualité des données identitaires. Point d'entrée principal du tableau de bord.</div>
     </div>
 
@@ -761,7 +763,7 @@
 
     <div class="page-header">
       <div class="page-tag">🔍 Dashboard</div>
-      <div class="page-title">SQD — Filtre Par Champ Unique</div>
+      <div class="page-title">SQD - Filtre Par Champ Unique</div>
       <div class="page-subtitle">Analyse approfondie de la qualité des données champ par champ. Permet d'identifier précisément les clients en erreur sur un critère spécifique.</div>
     </div>
 
@@ -771,10 +773,10 @@
         <div><div class="card-title">Filtres disponibles</div></div>
       </div>
       <div class="filter-tags">
-        <span class="filter-tag">Colonne à afficher</span>
         <span class="filter-tag">legal_type_label</span>
         <span class="filter-tag">identity_status_label</span>
         <span class="filter-tag">identity_role_label</span>
+        <span class="filter-tag">Colonne à afficher</span>
       </div>
     </div>
 
@@ -782,11 +784,12 @@
       <div class="card-header">
         <div class="card-icon" style="background:rgba(245,182,47,0.15)">🎛️</div>
         <div>
-          <div class="card-title">Paramètre — Colonne à afficher</div>
+          <div class="card-title">Paramètre - Colonne à afficher</div>
           <div class="card-desc">Sélectionnez un champ dans la liste déroulante pour analyser la qualité des données sur ce champ précis</div>
         </div>
       </div>
 
+      <!--
       <h3>Champs Personne Morale uniquement</h3>
       <div class="filter-tags">
         <span class="filter-tag">Annual Turnover</span>
@@ -825,8 +828,11 @@
         <span class="filter-tag">Tax Zip Code</span>
         <span class="filter-tag">Zipcode</span>
       </div>
+      -->
+      
     </div>
-
+    
+      
     <h3>Statistique Par Champ Sélectionné</h3>
     <p style="font-size:13px;color:var(--text-light);margin-bottom:16px">Titre affiché : <em>"Statistique par champ sélectionné : [nom du champ]"</em></p>
 
@@ -857,8 +863,8 @@
         <tbody>
           <tr><td>id</td><td>Identifiant unique du client dans le système</td></tr>
           <tr><td>legal_type_label</td><td>Type de client : Personne Morale ou Personne Physique</td></tr>
-          <tr><td>Valeur du champ</td><td>Valeur actuelle renseignée pour ce client (NULL si non renseignée)</td></tr>
-          <tr><td>Message d'erreur</td><td>Description précise de l'anomalie détectée sur ce champ</td></tr>
+          <tr><td>value_column</td><td>Valeur actuelle renseignée pour ce client (NULL si non renseignée)</td></tr>
+          <tr><td>error_column</td><td>Description précise de l'anomalie détectée sur ce champ</td></tr>
         </tbody>
       </table>
       <div class="highlight" style="margin-top:12px">
@@ -876,7 +882,7 @@
       <p>Ce champ dispose de <strong>deux niveaux d'anomalie</strong> :</p>
       <ul class="doc-list">
         <li><div class="bullet" style="background:var(--red)"></div><strong>Erreur</strong> : la valeur est non conforme aux règles — correction obligatoire</li>
-        <li><div class="bullet" style="background:var(--orange)"></div><strong>Avertissement</strong> : la valeur est à vérifier — correction recommandée. S'affiche uniquement si aucune erreur n'est présente sur ce champ.</li>
+        <li><div class="bullet" style="background:var(--orange)"></div><strong>Avertissement(warning)</strong> : la valeur est à vérifier — correction recommandée. S'affiche uniquement si aucune erreur n'est présente sur ce champ.</li>
       </ul>
     </div>
 
@@ -889,7 +895,7 @@
 
     <div class="page-header">
       <div class="page-tag">⚡ Dashboard</div>
-      <div class="page-title">SQD — Filtre Multiple</div>
+      <div class="page-title">SQD - Filtre Multiple</div>
       <div class="page-subtitle">Outil d'analyse flexible permettant d'analyser simultanément plusieurs champs et d'identifier les clients présentant des anomalies sur plusieurs critères à la fois.</div>
     </div>
 
@@ -933,13 +939,29 @@
     <h3>Top des Champs Erronés</h3>
     <div class="card">
       <p>Classement des champs présentant le plus grand nombre d'identités en erreur, avec leur rang et leur nombre d'erreurs.</p>
-      <div class="example-box">
-        <span class="ex-rank">Rang</span> | <span class="ex-field">Champ</span>          | <span class="ex-count">Nombre d'erreurs</span><br>
-        <span class="ex-rank">  1 </span> | <span class="ex-field">legal_form    </span> | <span class="ex-count">7 872</span><br>
-        <span class="ex-rank">  2 </span> | <span class="ex-field">contact_phone </span> | <span class="ex-count">6 902</span><br>
-        <span class="ex-rank">  3 </span> | <span class="ex-field">email         </span> | <span class="ex-count">3 848</span><br>
-        <span class="ex-rank">  4 </span> | <span class="ex-field">annual_turnover</span>| <span class="ex-count">1 649</span>
-      </div>
+     <div class="example-box">
+      <strong>Exemple</strong><br><br>
+      <table border="1" style="border-collapse: collapse; width: 100%;">
+        <tr>
+          <td>legal_form</td>
+          <td>contact_phone</td>
+          <td>email</td>
+          <td>annual_turnover</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>2</td>
+          <td>3</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td>7 872</td>
+          <td>6 902</td>
+          <td>3 848</td>
+          <td>1 649</td>
+        </tr>
+      </table>
+    </div>
       <p>Ce classement permet d'identifier rapidement les <strong>champs prioritaires à corriger</strong> pour améliorer la qualité globale des données.</p>
     </div>
 
